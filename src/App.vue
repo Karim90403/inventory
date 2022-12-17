@@ -1,27 +1,288 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-</template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
+<!-- <script setup lang="ts">
+import { directive } from '@babel/types';
+import { defineComponent,ref } from 'vue';
 import HelloWorld from './components/HelloWorld.vue';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-});
-</script>
+
+</script> -->
+
+
+<template>
+  <div class="flex-center">
+    <div class="flex-container">
+      <div class="info-block">
+        <img class="info-image" src="./assets/ImgBlur.png" alt="ImgBlur">
+        <span class="blured-title"></span>
+        <span class="blured-text_1"></span>
+        <span class="blured-text_2"></span>
+        <span class="blured-text_3"></span>
+        <span class="blured-text_4"></span>
+        <span class="blured-text_5"></span>
+        <span class="blured-text_6"></span>
+      </div>
+
+      <div class="inventory">
+        <div class="inventory-modal">
+          <span class="hide-button"><img src="./assets/hide.png"></span>
+          <span class="inventory-modal_item"></span>
+          <hr class="border">
+          <div class="text-block">
+            <span class="blured-title"></span>
+            <span class="blured-text_1"></span>
+            <span class="blured-text_2"></span>
+            <span class="blured-text_3"></span>
+            <span class="blured-text_4"></span>
+            <span class="blured-text_5"></span>
+            <hr class="border">
+            <span class="delete-button">Удалить предмет</span>
+          </div>
+
+        </div>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+        <span class="inventory-block"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-center">
+    <div class="bottom_frame">
+      <span class="hide-button"><img src="./assets/hide.png"></span>
+      <div class="blured-text"></div>
+    </div>
+  </div>
+
+</template>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+$primary-color: #4D4D4D;
+
+@mixin blured-text($width, $min-width){
+  background: linear-gradient(90deg, #3C3C3C 0%, #444444 51.04%, #333333 100%);
+  width: $width;
+  min-width: $min-width;
+  border-radius: 8px;
+  height: 3vh;
+  min-height: 12px;
+  margin-top: 4vh;
+  display: block;
+}
+
+@mixin block{
+  background: #262626;
+  border: 1px solid $primary-color;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@mixin rectangle($translucent-color, $normal-color, $min-size,  $size){
+  position: relative;
+  
+
+  background: $normal-color;
+  min-width: $min-size;
+  min-height: $min-size;
+  width: $size;
+  height: $size;
+  transform: translate(-10%,10%);
+  &:before{
+    content: "";
+    display: block;
+    backdrop-filter: blur(6px);
+    filter: blur(6px);
+    background: $translucent-color;
+    min-width: $min-size;
+    min-height: $min-size;
+    width: $size;
+    height: $size;
+    transform: translate(10%,-10%);
+  }
+}
+
+body {
+  background-color: #1E1E1E;
+  font-family: 'SF Pro Display', sans-serif;
+}
+
+.flex{
+ &-container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+    width: 95%;
+  }
+  &-center{
+    display: flex;
+    justify-content: center;
+  }
+}
+.info{
+  &-image{
+    margin-top: 18px;
+  }
+  &-block{
+    @include block();
+    width: 25%;
+    padding: 0 14px 0 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 125vh;
+    img{
+      width: 100%;
+    }
+  }
+}
+
+.blured{
+  &-title{
+    @include blured-text(80%,190px);
+    height: 6vh;
+  }
+  &-text{
+    &_1{
+      @include blured-text(65%,155px);
+      margin-top: 6vh;
+    }
+    &_2{@include blured-text(80%,190px);}
+    &_3{@include blured-text(72%,170px);}
+    &_4{@include blured-text(67%,160px);}
+    &_5{ @include blured-text(59% ,140px);}
+    &_6{
+      @include blured-text(24%,80px);
+      margin-top: 6vh 0 6vh 0;
+    }
+  }
+}
+
+.inventory{
+  @include block();
+  position: relative;
+  width: 60vw;
+  height: 125vh;
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: repeat(5,1fr);
+  grid-auto-rows: 25vh;
+  &-block{
+    @include block();
+    border-radius: 0;
+    border: 1px solid $primary-color;
+  }
+  &-modal{
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    background: rgba(38, 38, 38, 0.5);
+    border-left: 1px solid #4D4D4D;
+    border-radius: 0 12px 12px 0;
+    backdrop-filter: blur(8px);
+    right: 0;
+    top: 0
+  }
+  .hide-button{
+    display: flex;
+    justify-content: end;
+    cursor: pointer;
+    img{
+      margin: 14px;
+      width: 2vh;
+      min-width: 12px;
+    }
+  }
+  &-modal_item{
+    @include rectangle(rgba(184, 217, 152, 0.35),#7FAA65, 115.56px, 20vw);
+    margin: 5vh 5vw 5vh 6vw;
+    display: block; 
+  }
+  .border{
+      display: block;
+      width: 90%;
+      margin-top: 6vh;
+      border-bottom: 1px solid $primary-color;
+    }
+  .text-block{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .delete-button{
+    text-align: center;
+    background: #FA7272;
+    border-radius: 8px;
+    width: 90%;
+    color: #fff;
+    min-height: 39px;
+    margin-top: 2vh;
+    padding-top: 1em;
+  }
+  .blured{
+    &-title{
+      @include blured-text(84%,211px);
+      height: 6vh;
+    }
+    &-text{
+      &_1{
+        @include blured-text(84%,211px);
+        margin-top: 6vh;
+      }
+      &_2{@include blured-text(84%,211px);}
+      &_3{@include blured-text(84%,211px);}
+      &_4{@include blured-text(72%,180px);}
+      &_5{
+        @include blured-text(32%,80px);
+        margin-top: 6vh 0 6vh 0;
+      }
+    }
+  }
+}
+
+.bottom_frame {
+  @include block();
+  margin: 6vh 0 8vh 0;
+  width: 95%;
+  height: 18vh;
+  .blured-text{
+    @include blured-text(90%,689px);
+    height: 9vh;
+    min-height: 36px;
+    margin-top: 0;
+    margin-left: 3vw;
+  }
+  .hide-button{
+    display: flex;
+    justify-content: end;
+    cursor: pointer;
+    img{
+      margin: 14px;
+      width: 2vh;
+      min-width: 12px;
+    }
+  }
 }
 </style>
