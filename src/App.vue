@@ -1,10 +1,88 @@
-<!-- <script setup lang="ts">
-import { directive } from '@babel/types';
-import { defineComponent,ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+<script setup lang="ts">
+import { ref,onUnmounted,onMounted } from 'vue';
+import { VueDraggableNext } from 'vue-draggable-next'
+import { MaskInput } from "maska"
+let id = 0;
+let delitingValue = 0;
+interface Item {
+  id: number;
+  count: number;
+  isItem: boolean;
+  color?: string;
+}
 
+let items = ref<Array<Item>>([
+  {id: id++, isItem: true, color: "green", count: 4},
+  {id: id++, isItem: true, color: "yellow", count: 2},
+  {id: id++, isItem: true, color: "purple", count: 5},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0},
+  {id: id++, isItem: false, count: 0}
+])
 
-</script> -->
+const isModalActive = ref<boolean>(false);
+const isFramelActive = ref<boolean>(true);
+const color = ref<string>("green");
+const modalId = ref<number>(0)
+const isDeliting = ref<boolean>(false);
+
+const hideModal = ():void => {isModalActive.value = false;}
+const hideFrame = ():void => {isFramelActive.value = false;}
+const delitingStart = ():void => {isDeliting.value = true;}
+const cancelDeliting = ():void => {isDeliting.value = false;}
+
+const openModal = (item_id: number):void => {
+  modalId.value = item_id;
+  items.value.forEach(item => {
+    if(item.id == modalId.value && item.isItem == true){
+      color.value = item.color;
+    }
+  })
+  isModalActive.value = true;
+}
+
+const confirmDeliting = ():void => {
+  items.value.forEach(item => {
+    if(item.id == modalId.value && item.isItem == true && item.count >= delitingValue){
+      item.count = item.count - delitingValue;
+      cancelDeliting();
+      hideModal();
+      if(item.count == 0) {
+        item.isItem = false;
+      }
+    }
+  })
+}
+
+onMounted(() => {
+  if (localStorage.getItem("itemsArray")){
+    items.value = JSON.parse(localStorage.getItem("itemsArray"))
+    }
+})
+
+onUnmounted(()=>{
+    localStorage.setItem("itemsArray", JSON.stringify(items.value))
+  })
+</script>
 
 
 <template>
@@ -20,11 +98,10 @@ import HelloWorld from './components/HelloWorld.vue';
         <span class="blured-text_5"></span>
         <span class="blured-text_6"></span>
       </div>
-
       <div class="inventory">
-        <div class="inventory-modal">
-          <span class="hide-button"><img src="./assets/hide.png"></span>
-          <span class="inventory-modal_item"></span>
+        <div :class="isModalActive ? 0 : 'disabled'" class="inventory-modal">
+          <span class="hide-button" @click="hideModal()"><img src="./assets/hide.png"></span>
+          <span :class='`inventory-modal_item-${color}`'></span>
           <hr class="border">
           <div class="text-block">
             <span class="blured-title"></span>
@@ -34,42 +111,29 @@ import HelloWorld from './components/HelloWorld.vue';
             <span class="blured-text_4"></span>
             <span class="blured-text_5"></span>
             <hr class="border">
-            <span class="delete-button">Удалить предмет</span>
+            <span class="delete-button" @click="delitingStart()">Удалить предмет</span>
+            <div :class="isDeliting ? 0 : 'hiden'" class="delete-item_block">
+              <input type="number" v-maska data-maska="#" v-model="delitingValue" placeholder="Введите количество" class="masked delete-item_input">
+              <div class="delete-item_buttons">
+                <span class="cancel-button" @click="cancelDeliting()">Отмена</span>
+                <span class="confirm-button" @click="confirmDeliting()">Подтвердить</span>
+              </div>
+            </div>
           </div>
-
         </div>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
-        <span class="inventory-block"></span>
+          <VueDraggableNext class="inventory-greed" :list="items" handle=".handle" :sort="true">
+            <div v-for="item in items" class="inventory-block" :class="item.isItem ? 'handle' : 0" :key="item.id">
+              <span v-if="item.isItem" :class='`inventory-item-${item.color}`' @click="openModal(item.id)"></span>
+              <span v-if="item.isItem" class='inventory-item-count'>{{item.count}}</span>
+            </div>
+          </VueDraggableNext>
       </div>
     </div>
   </div>
 
-  <div class="flex-center">
+  <div v-if="isFramelActive" class="flex-center">
     <div class="bottom_frame">
-      <span class="hide-button"><img src="./assets/hide.png"></span>
+      <span class="hide-button" @click="hideFrame()"><img src="./assets/hide.png"></span>
       <div class="blured-text"></div>
     </div>
   </div>
@@ -79,6 +143,7 @@ import HelloWorld from './components/HelloWorld.vue';
 <style lang="scss">
 @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 $primary-color: #4D4D4D;
+$primary-background: #dedede;
 
 @mixin blured-text($width, $min-width){
   background: linear-gradient(90deg, #3C3C3C 0%, #444444 51.04%, #333333 100%);
@@ -92,7 +157,7 @@ $primary-color: #4D4D4D;
 }
 
 @mixin block{
-  background: #262626;
+  background: $primary-background;
   border: 1px solid $primary-color;
   border-radius: 12px;
   overflow: hidden;
@@ -100,8 +165,6 @@ $primary-color: #4D4D4D;
 
 @mixin rectangle($translucent-color, $normal-color, $min-size,  $size){
   position: relative;
-  
-
   background: $normal-color;
   min-width: $min-size;
   min-height: $min-size;
@@ -123,8 +186,14 @@ $primary-color: #4D4D4D;
 }
 
 body {
-  background-color: #1E1E1E;
+  background-color: #fff; 
   font-family: 'SF Pro Display', sans-serif;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .flex{
@@ -183,26 +252,117 @@ body {
   position: relative;
   width: 60vw;
   height: 125vh;
-  display: grid;
   overflow: hidden;
-  grid-template-columns: repeat(5,1fr);
-  grid-auto-rows: 25vh;
   &-block{
     @include block();
     border-radius: 0;
+    position: relative;
     border: 1px solid $primary-color;
+  }
+  &-greed{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-auto-rows: 25vh;
+  }
+  .disabled{
+    right: -50%;
+    border: none;
+  }
+  .delete-item{
+    &_block{
+      width: 100%;
+      height: 30vh;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      position: absolute;
+      background: $primary-background;
+      border-top: 1px solid $primary-color;
+      transition: .5s;
+    }
+    &_input{
+      border: 1px solid $primary-color;
+      border-radius: 4px;
+      background: $primary-background;
+      width: 84%;
+      font-size: 18px;
+      padding: 1em;
+      box-sizing: border-box;
+      outline: none;
+    }
+    &_buttons{
+      width: 84%;
+      display: flex;
+      justify-content: space-between;
+      .cancel-button{
+        background: #FFFFFF;
+        border-radius: 8px;
+        text-align: center;
+        padding: 1em 2em 1em 2em;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      .confirm-button{
+        background: #FA7272;
+        color: #fff;
+        border-radius: 8px;
+        text-align: center;
+        padding: 1em 2em 1em 2em;
+        font-size: 18px;
+        cursor: pointer;
+      }
+    }
+  }
+  
+  .hiden{
+    bottom: -400px;
+    border: none;
+    position: absolute;
+  }
+
+  &-item{
+    &-green{
+      @include rectangle(rgba(184, 217, 152, 0.35),#7FAA65, 48px, 6vw);
+      margin: 3vh 0vw 0vh 3.5vw;
+      display: block; 
+      cursor: pointer;
+    }
+    &-yellow{
+      @include rectangle(rgba(217, 187, 152, 0.35),#AA9765, 48px, 6vw);
+      margin: 3vh 0vw 0vh 3.5vw;
+      display: block; 
+      cursor: pointer;
+    }
+    &-purple{
+      @include rectangle(rgba(116, 129, 237, 0.35),#656CAA, 48px, 6vw);
+      margin: 3vh 0vw 0vh 3.5vw;
+      display: block; 
+      cursor: pointer;
+    }
+    &-count{
+      color: #fff;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      border: 1px solid $primary-color;
+      border-radius: 6px 0px 0px 0px;
+      padding: .1em .5em .1em .5em;
+    }
   }
   &-modal{
     position: absolute;
     width: 50%;
     height: 100%;
     overflow: hidden;
-    background: rgba(38, 38, 38, 0.5);
     border-left: 1px solid #4D4D4D;
     border-radius: 0 12px 12px 0;
     backdrop-filter: blur(8px);
+    transition: .5s;
     right: 0;
-    top: 0
+    top: 0;
+    z-index: 10;
   }
   .hide-button{
     display: flex;
@@ -215,9 +375,21 @@ body {
     }
   }
   &-modal_item{
-    @include rectangle(rgba(184, 217, 152, 0.35),#7FAA65, 115.56px, 20vw);
-    margin: 5vh 5vw 5vh 6vw;
-    display: block; 
+    &-green{
+      @include rectangle(rgba(184, 217, 152, 0.35),#7FAA65, 115.56px, 20vw);
+      margin: 5vh 5vw 5vh 6vw;
+      display: block; 
+    }
+    &-yellow{
+      @include rectangle(rgba(217, 187, 152, 0.35),#AA9765, 115.56px, 20vw);
+      margin: 5vh 5vw 5vh 6vw;
+      display: block; 
+    }
+    &-purple{
+      @include rectangle(rgba(116, 129, 237, 0.35),#656CAA, 115.56px, 20vw);
+      margin: 5vh 5vw 5vh 6vw;
+      display: block; 
+    }
   }
   .border{
       display: block;
@@ -240,6 +412,7 @@ body {
     min-height: 39px;
     margin-top: 2vh;
     padding-top: 1em;
+    cursor: pointer;
   }
   .blured{
     &-title{
@@ -283,6 +456,25 @@ body {
       width: 2vh;
       min-width: 12px;
     }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  $primary-background: #262626;
+  .info-block,.bottom_frame, .inventory, .inventory-block, .inventory .delete-item_block, .inventory .delete-item_input {
+    background: $primary-background;
+  }
+
+  .inventory .delete-item_input{
+    color: #fff;
+  }
+
+  .inventory-modalХ{
+    background: rgba(38, 38, 38, 0.5);
+  }
+
+  body{
+    background-color: #1E1E1E;
   }
 }
 </style>
