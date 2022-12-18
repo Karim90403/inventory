@@ -348,7 +348,7 @@ input::-webkit-inner-spin-button {
       cursor: pointer;
     }
     &-count{
-      color: #fff;
+      color: #000;
       position: absolute;
       bottom: 0;
       right: 0;
@@ -471,7 +471,7 @@ input::-webkit-inner-spin-button {
     background: $primary-background;
   }
 
-  .inventory .delete-item_input{
+  .inventory .delete-item_input, .inventory-item-count{
     color: #fff;
   }
 
