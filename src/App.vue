@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref,onMounted, onUpdated } from 'vue';
 import { VueDraggableNext } from 'vue-draggable-next'
-import { MaskInput } from "maska"
+import { vMaska } from "maska"
+
 let id = 0;
-let delitingValue = 0;
+let delitingValue = ref<number|null>(null);
 interface Item {
   id: number;
   count: number;
@@ -54,7 +55,7 @@ const openModal = (item_id: number):void => {
   modalId.value = item_id;
   items.value.forEach(item => {
     if(item.id == modalId.value && item.isItem == true){
-      color.value = item.color;
+      color.value = item.color ?? ''
     }
   })
   isModalActive.value = true;
@@ -62,10 +63,11 @@ const openModal = (item_id: number):void => {
 
 const confirmDeliting = ():void => {
   items.value.forEach(item => {
-    if(item.id == modalId.value && item.isItem == true && item.count >= delitingValue){
-      item.count = item.count - delitingValue;
+    if(delitingValue.value !== null && item.id == modalId.value && item.isItem == true && item.count >= delitingValue.value){
+      item.count = item.count - delitingValue.value;
       cancelDeliting();
       hideModal();
+      delitingValue.value = 0;
       if(item.count == 0) {
         item.isItem = false;
       }
@@ -79,7 +81,7 @@ const save = ():void => {
 
 onMounted(() => {
   if (localStorage.getItem("itemsArray")){
-    items.value = JSON.parse(localStorage.getItem("itemsArray"))
+    items.value = JSON.parse(localStorage.getItem("itemsArray") ?? '')
     }
 })
 
