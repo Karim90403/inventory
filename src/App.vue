@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref,onUnmounted,onMounted } from 'vue';
+import { ref,onMounted, onUpdated } from 'vue';
 import { VueDraggableNext } from 'vue-draggable-next'
 import { MaskInput } from "maska"
 let id = 0;
@@ -73,13 +73,17 @@ const confirmDeliting = ():void => {
   })
 }
 
+const save = ():void => {
+  localStorage.setItem("itemsArray", JSON.stringify(items.value))
+}
+
 onMounted(() => {
   if (localStorage.getItem("itemsArray")){
     items.value = JSON.parse(localStorage.getItem("itemsArray"))
     }
 })
 
-onUnmounted(()=>{
+onUpdated(()=>{
     localStorage.setItem("itemsArray", JSON.stringify(items.value))
   })
 </script>
@@ -121,7 +125,7 @@ onUnmounted(()=>{
             </div>
           </div>
         </div>
-          <VueDraggableNext class="inventory-greed" :list="items" handle=".handle" :sort="true">
+          <VueDraggableNext class="inventory-greed" @change="save()"  :list="items" handle=".handle" :sort="true">
             <div v-for="item in items" class="inventory-block" :class="item.isItem ? 'handle' : 0" :key="item.id">
               <span v-if="item.isItem" :class='`inventory-item-${item.color}`' @click="openModal(item.id)"></span>
               <span v-if="item.isItem" class='inventory-item-count'>{{item.count}}</span>
