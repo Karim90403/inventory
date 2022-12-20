@@ -148,11 +148,11 @@ onUpdated(()=>{
 
 <style lang="scss">
 @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
-$primary-color: #4D4D4D;
+$primary-color: #969696;
 $primary-background: #dedede;
 
 @mixin blured-text($width, $min-width){
-  background: linear-gradient(90deg, #3C3C3C 0%, #444444 51.04%, #333333 100%);
+  background: linear-gradient(90deg, #9f9f9f 0%, #979797 51.04%, #a2a2a2 100%);
   width: $width;
   min-width: $min-width;
   border-radius: 8px;
@@ -467,6 +467,54 @@ input::-webkit-inner-spin-button {
 
 @media (prefers-color-scheme: dark) {
   $primary-background: #262626;
+  $primary-color: #4D4D4D;
+
+  @mixin blured-text($width, $min-width){
+  background: linear-gradient(90deg, #3C3C3C 0%, #444444 51.04%, #333333 100%);
+  width: $width;
+  min-width: $min-width;
+  border-radius: 8px;
+  height: 3vh;
+  min-height: 12px;
+  margin-top: 4vh;
+  display: block;
+}
+
+@mixin block{
+  background: $primary-background;
+  border: 1px solid $primary-color;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.blured{
+  &-title{@include blured-text(80%,190px);}
+  &-text{
+    &_1{@include blured-text(65%,155px);}
+    &_2{@include blured-text(80%,190px);}
+    &_3{@include blured-text(72%,170px);}
+    &_4{@include blured-text(67%,160px);}
+    &_5{ @include blured-text(59% ,140px);}
+    &_6{@include blured-text(24%,80px);}
+  }
+}
+.inventory{
+  .blured{
+    &-title{@include blured-text(84%,211px);}
+    &-text{
+      &_1{@include blured-text(84%,211px);}
+      &_2{@include blured-text(84%,211px);}
+      &_3{@include blured-text(84%,211px);}
+      &_4{@include blured-text(72%,180px);}
+      &_5{@include blured-text(32%,80px);}
+    }
+  }
+}
+.bottom_frame .blured-text {@include blured-text(72%,180px);}
+.info-block, .inventory,.bottom_frame{@include block()}
+.inventory-modal {border-left: 1px solid $primary-color;}
+.inventory-block {border: 1px solid $primary-color;}
+
   .info-block,.bottom_frame, .inventory, .inventory-block, .inventory .delete-item_block, .inventory .delete-item_input {
     background: $primary-background;
   }
